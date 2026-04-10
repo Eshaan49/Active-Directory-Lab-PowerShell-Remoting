@@ -1,101 +1,118 @@
-# Active-Directory-Lab-PowerShell-Remoting
-Enterprise-style Active Directory lab with DNS configuration and PowerShell Remoting using VMware
 # 🖥️ Active Directory Lab with PowerShell Remoting
 
 ## 📌 Overview
 
-This project demonstrates the setup of an enterprise-style Active Directory environment using VMware. It includes a Domain Controller and a Windows client machine configured within the same domain (`lab.local`).
-
-PowerShell Remoting (WinRM) is implemented to enable remote command execution between systems.
+This project demonstrates an enterprise-style Active Directory lab setup using VMware, including DNS configuration and PowerShell Remoting for remote system administration.
 
 ---
 
-## 🛠️ Technologies Used
+## 🎯 Objectives
 
-* VMware Workstation
-* Windows Server (Domain Controller)
-* Windows 10 Client
-* Active Directory Domain Services (AD DS)
-* DNS Configuration
-* PowerShell (WinRM)
-
----
-
-## ⚙️ Lab Setup
-
-### 🔹 Network Configuration
-
-* Host-only network (VMnet1)
-* Static IP addressing
-
-  * Domain Controller: 192.168.12.10
-  * Client: 192.168.12.20
-
-### 🔹 Active Directory
-
-* Domain created: `lab.local`
-* Client machine joined to domain
+* Configure an Active Directory Domain Controller (AD-DC)
+* Join a client machine to the domain (`lab.local`)
+* Configure DNS for domain communication
+* Enable and use PowerShell Remoting
+* Execute commands remotely across machines
 
 ---
 
-## 🔐 PowerShell Remoting
+## 🛠️ Lab Setup
 
-### Enable Remoting (Client)
+| Component         | Details            |
+| ----------------- | ------------------ |
+| Hypervisor        | VMware             |
+| Domain Controller | Windows Server     |
+| Client Machine    | Windows 10         |
+| Domain            | lab.local          |
+| Network           | Host-only (VMnet1) |
+
+---
+
+## 🌐 Network Configuration
+
+* AD-DC IP: `192.168.12.10`
+* Client IP: `192.168.12.20`
+* DNS: Pointed to Domain Controller
+
+---
+
+## 🔐 PowerShell Remoting Setup
+
+### Enable Remoting
 
 ```powershell
 Enable-PSRemoting -Force
 ```
 
-### Remote Session (from DC)
+### Test Connectivity
 
 ```powershell
-Enter-PSSession -ComputerName CLIENT.lab.local
+Test-WSMan 192.168.12.20
+```
+
+### Remote Command Execution
+
+```powershell
+Invoke-Command -ComputerName 192.168.12.20 -ScriptBlock { hostname }
 ```
 
 ---
 
-## 🧪 Example Commands
+## 💻 Example: Remote Task Execution
 
 ```powershell
-Get-Service spooler
-New-Item -Path C:\hackedyou -ItemType Directory
+Invoke-Command -ComputerName 192.168.12.20 `
+-FilePath "C:\Users\Administrator\admin_tasks.ps1" `
+-Credential lab\Administrator
 ```
 
----
-
-## 🐞 Troubleshooting
-
-### Issue: Domain Join Failure
-
-* Cause: Incorrect DNS configuration
-* Fix: Set DNS to Domain Controller IP
-
-### Issue: Authentication Errors
-
-* Cause: Multiple IP addresses (NAT + Host-only conflict)
-* Fix: Removed incorrect IP (192.168.137.x)
+✔ Successfully created directory remotely on client machine.
 
 ---
 
 ## 📸 Screenshots
 
-(Add screenshots in /screenshots folder)
+### 🔹 Successful Remote Command
+
+![PS Remoting](screenshots/ps-remoting-success.png)
+
+### 🔹 Folder Created on Client
+
+![Folder Created](screenshots/folder-created.png)
 
 ---
 
 ## 🧠 Key Learnings
 
-* Importance of DNS in Active Directory
-* Kerberos vs NTLM authentication
-* PowerShell Remoting for remote administration
-* Real-world troubleshooting of network issues
+* Active Directory Domain setup
+* DNS configuration and troubleshooting
+* PowerShell Remoting (WinRM)
+* Kerberos authentication issues & fixes
+* Remote command execution
+* Basic lateral movement simulation
+
+---
+
+## ⚠️ Troubleshooting Highlights
+
+* Fixed DNS resolution issues (`nslookup`)
+* Resolved Kerberos authentication errors
+* Configured TrustedHosts when needed
+* Ensured time synchronization between machines
 
 ---
 
 ## 🚀 Future Improvements
 
-* Add multiple clients      
-* Implement Group Policies (GPO)
-* Simulate cybersecurity attacks (lateral movement)
+* Automate user creation via PowerShell
+* Implement Group Policy Objects (GPO)
+* Add multiple client machines for scaling
+* Integrate security monitoring (Event Logs / SIEM)
+
+---
+
+## 👨‍💻 Author
+
+**Eshaan Pilar**
 
 ---
